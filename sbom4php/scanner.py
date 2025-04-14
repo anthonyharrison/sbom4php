@@ -6,11 +6,11 @@ import os
 import re
 import unicodedata
 
+from lib4package.metadata import Metadata
 from lib4sbom.data.document import SBOMDocument
 from lib4sbom.data.package import SBOMPackage
 from lib4sbom.data.relationship import SBOMRelationship
 from lib4sbom.license import LicenseScanner
-from lib4package.metadata import Metadata
 
 
 class PHPScanner:
@@ -241,7 +241,6 @@ class PHPScanner:
             package_licence = component.get("license")
             homepage = component.get("homepage")
             download_location = component.get("source")
-            distribution = component.get("dist")
             self.php_package.set_filesanalysis(False)
             # Assume supplier not known
             self.php_package.set_supplier("UNKNOWN", "NOASSERTION")
@@ -310,7 +309,7 @@ class PHPScanner:
             # Copyright
             self.php_package.set_copyrighttext("NOASSERTION")
             if component.get("time") is not None:
-                self.php_package.set_value("release_date", component.get("time") )
+                self.php_package.set_value("release_date", component.get("time"))
 
             try:
                 self.package_metadata.get_package(name, version)

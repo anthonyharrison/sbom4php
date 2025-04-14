@@ -103,8 +103,8 @@ def main(argv=None):
         print("[ERROR] Missing dependency file")
         return -1
 
-    if args["application"] == "":
-        print("[ERROR} Must specify application")
+    if args["application"] == "" or args["release"] == "":
+        print("[ERROR} Must specify application name and release")
         return -1
 
     if args["sbom"] == "spdx":
