@@ -1,13 +1,8 @@
 # SBOM4JS
 
 The SBOM4PHP is a free, open source tool to generate a
-SBOM (Software Bill of Materials) for PHP application in a number of formats including
+SBOM (Software Bill of Materials) for a PHP application in a number of formats including
 [SPDX](https://www.spdx.org) and [CycloneDX](https://www.cyclonedx.org).
-It identifies all of the dependent components which are
-explicity defined (typically via requirements.txt file) or implicitly as a
-hidden dependency.
-
-It can also be used to create a SBOM from a package-lock.json file. In this case no transitive components will be identified.
 
 It is intended to be used as part of a continuous integration system to enable accurate records of SBOMs to be maintained
 and also to support subsequent audit needs to determine if a particular component (and version) has been used.
@@ -30,9 +25,9 @@ up for testing using different versions of Python.
 ## Usage
 
 ```bash
-usage: sbom4php [-h] [-d DEPENDENCY] [--ignore] [--debug] [--sbom {spdx,cyclonedx}] [--format {tag,json,yaml}] [-o OUTPUT_FILE] [-V]
+usage: sbom4php [-h] [-d DEPENDENCY] [--application APPLICATION] [--release RELEASE] [--debug] [--sbom {spdx,cyclonedx}] [--format {tag,json,yaml}] [-o OUTPUT_FILE] [-V]
 
-SBOM4JS generates a Software Bill of Materials for a PHP application identifying all of the dependent components.
+SBOM4PHP generates a Software Bill of Materials for a PHP application identifying all of the dependent components.
 
 options:
   -h, --help            show this help message and exit
@@ -40,8 +35,10 @@ options:
 
 Input:
   -d DEPENDENCY, --dependency DEPENDENCY
-                        Directory containing javascript dependency file
-  --ignore              ignore missing dependencies
+                        PHP dependency file
+  --application APPLICATION
+                        application name
+  --release RELEASE     application release
 
 Output:
   --debug               add debug information
@@ -55,10 +52,9 @@ Output:
 						
 ## Operation
 
-The `--dependency` option is used to identify the directory containing the `package-lock.json` dependency file.
-If this option is not specified, the current directory is assumed.
+The `--dependency` option is used to identify the of the `composer.lock` dependency file.
 
-The `--ignore` option is used to including any missing dependencies which are not fully specified in the dependency file.
+The `--application` and `--release` options are used to specify the name and release of the application defined by the dependency file. These options must be specified.
 
 The `--sbom` option is used to specify the format of the generated SBOM (the default is SPDX). The `--format` option
 can be used to specify the formatting of the SBOM (the default is Tag Value format for a SPDX SBOM). JSON format is supported for both
