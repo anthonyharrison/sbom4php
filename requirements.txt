@@ -1,0 +1,3 @@
+lib4sbom >= 0.8.0
+lib4package >= 0.3.2
+
