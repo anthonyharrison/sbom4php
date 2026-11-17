@@ -11,7 +11,7 @@ from lib4sbom.data.document import SBOMDocument
 from lib4sbom.data.package import SBOMPackage
 from lib4sbom.data.relationship import SBOMRelationship
 from lib4sbom.license import LicenseScanner
-
+from lib4sbom.utils import format_supplier
 
 class PHPScanner:
     """
@@ -59,35 +59,6 @@ class PHPScanner:
                 print(json.dumps(self.module_data, indent=2))
         elif self.debug:
             print(f"No {self.dependency_file} not found")
-
-    def _format_supplier(self, supplier_info, include_email=True):
-        # See https://stackoverflow.com/questions/1207457/convert-a-unicode-string-to-a-string-in-python-containing-extra-symbols
-        # And convert byte object to a string
-        name_str = (
-            unicodedata.normalize("NFKD", supplier_info)
-            .encode("ascii", "ignore")
-            .decode("utf-8")
-        )
-        if " " in name_str:
-            # Get names assumed to be at least two names <first> <surname>
-            names = re.findall(r"[a-zA-Z\.\]+ [A-Za-z]+ ", name_str)
-        else:
-            # Handle case where only single name provided
-            names = [name_str]
-        # Get email addresses
-        if self.debug:
-            print(f"{supplier_info} => {name_str} => {names}")
-        # Use RFC-5322 compliant regex (https://regex101.com/library/6EL6YF)
-        emails = re.findall(
-            r"((?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))",
-            supplier_info,
-            re.IGNORECASE,
-        )
-        supplier = " ".join(n for n in names)
-        if include_email and len(emails) > 0:
-            # Only one email can be specified, so choose last one
-            supplier = supplier + "(" + emails[-1] + ")"
-        return re.sub(" +", " ", supplier.strip())
 
     def _dependencies(self, module, parent):
         if self.debug:
@@ -248,15 +219,15 @@ class PHPScanner:
                 originator = originator[0]["name"]
                 if len(originator.split()) > 3:
                     self.php_package.set_supplier(
-                        "Organization", self._format_supplier(originator)
+                        "Organization", format_supplier(originator)
                     )
                 elif len(originator) > 1:
                     if self.debug:
-                        print(f"{originator} => {self._format_supplier(originator)}")
+                        print(f"{originator} => {format_supplier(originator)}")
                     self.php_package.set_supplier(
-                        "Person", self._format_supplier(originator)
+                        "Person", format_supplier(originator)
                     )
-                component_supplier = self._format_supplier(
+                component_supplier = format_supplier(
                     originator, include_email=False
                 )
                 if version is not None:
