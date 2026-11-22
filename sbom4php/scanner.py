@@ -54,7 +54,7 @@ class PHPScanner:
             # Load data from file
             with open(os.path.abspath(self.dependency_file), "r") as file_handle:
                 self.module_data = json.load(file_handle)
-            self.lock_file = self.dependency_file
+            self.lock_file = os.path.abspath(self.dependency_file)
             if self.debug:
                 print(json.dumps(self.module_data, indent=2))
         elif self.debug:
